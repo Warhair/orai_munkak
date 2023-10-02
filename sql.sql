@@ -58,3 +58,81 @@ KIADVÁNY(kki:id,könyv, kiadás_éve, kiadő kötés_tipus, elad_ár)
  NYUGTA(ny_szám, dátum, végösszeg)
  NY_TÉTEL(nyugts, kiadvány darab)
  XOR NY_TÉTEL nem lesz de az E mozgásnemű készletmozgásba kell hivatk. a nyugtára
+ 
+ 6
+ kartyák
+ email
+ el_osszeg
+ 
+ engedmenyek
+ el_osszeg
+ engedmény
+ 
+ PÉKSÉG
+ 
+ ANYAG <- ALKOTJA
+ PEKSUTI <- ALKOTJA
+ PEKSUTI <- TERMEK <- RECEPT
+ TERMEK <- GYARTAS
+ BOLT <- KISZALITVA 
+ GYARTAS <- KISZALITVA
+
+ANYAG[Aid(PK),nev,(keszlet),mertekegyseg
+PEKSUTI[Pid(PK),nev]
+ALKOTJA[Anyag(KK,OK),Peksutemeny(KK,OK)]
+TERMEK[tkod(PK), meret, súly, Peksutemeny(KK), ar, hanyadagosR, idokorlat{óra}]
+RECEPT[Termek(KK),Anyag(PK),szukmennyiseg]
+GYARTAS[mikor(OK,){datum-ido},Termek(OK,KK),hanyTepsi]
+BOLT[Bid(PK),cim...]
+KISZALITVA[Bolt(KK,OK),Gyartras(KK,OK),hány,SZmikor]
+ 
+ 
+  create Function meghaladja
+ (
+	@tant char(5),
+	@oszt char(2)
+ )
+ return bit
+ 
+ as
+ begin
+	declare @vissza bit =0
+	declare @korlát tinyint, @van tinyint
+	
+	select @korlát= heti_óraszám from tantárgy where tant=@tant
+	select @van = Select cont(*) from órarend where osztály=@oszt and tant = @tant
+	if @korlát < @van
+		set @vissza = 1
+	return @vissza
+ end
+ Select db.meghaladja('mat1','1a')
+ 
+ create Function heti_óraszám
+ (
+	@tant char(5)
+ )
+ returns tinyint
+ as
+ begin
+     return (select heti_oraszám from tantárgy where tant = @tant)
+
+create view nézet1 as
+select *, dbo.heti_oraszám(tant) as előírt from tanít
+
+select * from nézet1
+
+create function tanar_utkozes
+(
+ @tant char(5),
+ @oszt char(2),
+ @nap  tinyint,
+ @ora  tinyint
+	
+)
+returns bit
+as
+begin
+	declare @tanar int
+	select @tanar= tanár from @tanar where osztaly= @osztály and tant=@tant
+	select from óranrend inner join on osztál
+end
