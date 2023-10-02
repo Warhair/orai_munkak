@@ -20,3 +20,4 @@ eseménykezelő
         const esemenyem = new CustomEvent("torles", { detail: this.#index });
         window.dispatchEvent(esemenyem);
     }
+https://github.com/Agnes-milia?tab=repositories
